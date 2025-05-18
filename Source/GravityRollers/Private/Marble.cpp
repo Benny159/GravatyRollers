@@ -28,17 +28,34 @@ void AMarble::BeginPlay()
 void AMarble::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 
 void AMarble::UpdatePhysicsProperties()
 {
 	MarbleMesh->SetWorldScale3D(FVector(Size));
 
-	float Mass = Weight * MaterialDensity;
+	Mass = Weight * MaterialDensity;
 	MarbleMesh->SetMassOverrideInKg(NAME_None, Mass);
 
 	MarbleMesh->BodyInstance.LinearDamping = SurfaceRoughness;
-	
 	MarbleMesh->BodyInstance.COMNudge = MassDistribution;
+
+	MarbleMesh->SetPhysMaterialOverride(CreatePhysicsMaterial());
+
+	MarbleMesh->BodyInstance.AngularDamping = AngularDamping;
+
 }
 
+UPhysicalMaterial* AMarble::CreatePhysicsMaterial()
+{
+	UPhysicalMaterial* PhysMat = NewObject<UPhysicalMaterial>(this);
+
+	PhysMat->Restitution = Restitution;
+	PhysMat->Friction = Friction;
+
+	PhysMat->FrictionCombineMode = FrictionCombineMode;
+	PhysMat->RestitutionCombineMode = RestitutionCombineMode;
+
+	return PhysMat;
+}
